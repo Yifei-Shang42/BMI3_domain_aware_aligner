@@ -24,7 +24,7 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
     """
     def gen_backtrack(seq1, seq2, sigma=11, epsilon=1, mode='pairwise', profile=None):
         """
-        :param profile:
+        :param profile: 2d nested list of profile matrix of previous alignment
         :param mode: str select between 'pairwise' & 'profile' modes
         :param seq1: str input protein sequence 1
         :param seq2: str input protein sequence 2
@@ -136,6 +136,7 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
 
     def gen_alignment_from_backtrack(backtracks, seq1, seq2, mode='pairwise', profile=None):
         """
+        :param profile: 2d nested list of profile matrix of previous alignment
         :param mode: str select between 'pairwise' & 'profile' modes
         :param backtracks: list [3 np.array backtracks for gap1, match, and gap2]
         :param seq1: str input protein sequence 1
@@ -230,9 +231,17 @@ GREEDY ALGO FOR MSA BASED ON PAIR-WISE GLOBAL ALIGNMENT
 
 
 def greedy_multiple_alignment_with_affine_gap_penalties(seqs, sigma=11, epsilon=1):
+    """
+    :param seqs: list of str raw strings for MSA input
+    :param sigma: int penalty for opening a gap
+    :param epsilon: int penalty for extending a gap
+    :return: list of str final MSA results
+    """
     def init_best_pair_alignment(seqs, sigma=11, epsilon=1):
         """
         :param seqs: list collection of multiple input protein sequences
+        :param sigma: int penalty for opening a gap
+        :param epsilon: int penalty for extending a gap
         :return: tuple (best_pair: tuple best pair of sequences, best_align: list best pair-wise alignment result)
         """
         best_pair = None
@@ -251,6 +260,13 @@ def greedy_multiple_alignment_with_affine_gap_penalties(seqs, sigma=11, epsilon=
         return best_pair, best_align
 
     def add_one_seq_to_alignment(unaligned_seqs, alignment, sigma=11, epsilon=1):
+        """
+        :param unaligned_seqs: list of str unaligned sequences :param alignment: list of str previous alignment sequences
+        :param sigma: int penalty for opening a gap
+        :param epsilon: int penalty for extending a gap
+        :return: tuple (unaligned_seqs: list of unaligned sequences excluding the newly added seq,
+        alignment_new: list of new alignment sequences)
+        """
         def update_alignment(alignment, align2_dummy):
             """
             :param alignment: list of old alignment strings
