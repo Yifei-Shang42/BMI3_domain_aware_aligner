@@ -32,18 +32,6 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         :param epsilon: int penalty for extending a gap
         :return: tuple (backtracks: list [3 np.array backtracks for gap1, match, and gap2], score: float best alignment score)
         """
-        # def read_penalty(path):
-        #     """
-        #     :param path: str file path for penalty matrix
-        #     :return: list of lines in penalty matrix
-        #     """
-        #     with open(path, 'r') as infile:
-        #         return infile.readlines()
-        # # init penalty
-        # penalty = read_penalty('C:/Users/lenovo/Downloads/rosalind_penalty.txt')
-        # penalty_matrix = [[eval(num) for num in line.strip().split()] for line in penalty]
-        # aa_idx = {'A': 0, 'C': 1, 'D': 2, 'E': 3, 'F': 4, 'G': 5, 'H': 6, 'I': 7, 'K': 8, 'L': 9, 'M': 10,
-        #                'N': 11, 'P': 12, 'Q': 13, 'R': 14, 'S': 15, 'T': 16, 'V': 17, 'W': 18, 'Y': 19}
         def weighted_score_with_profile(base, profile_column, penalty):
             """
             :param base: str the base in sequence 1
