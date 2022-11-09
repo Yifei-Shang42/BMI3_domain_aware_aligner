@@ -5,12 +5,14 @@ BMI3 Group5 Project4: Domain-aware aligner
 
 import numpy as np
 from math import inf
+import blosum as bl
+mat = bl.BLOSUM(62)
 
 """
-PAIR-WISE MULTIPLE ALIGNMENT WITH AFFINE GAP PENALTY
+PAIR-WISE GLOBAL ALIGNMENT WITH AFFINE GAP PENALTY
 """
 
-def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, penalty=None):
+def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, mode='pairwise'):
     """
     :param seq1: str input protein sequence 1
     :param seq2: str input protein sequence 2
@@ -18,26 +20,27 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, pe
     :param epsilon: int penalty for extending a gap
     :return: tuple (align1: str alignment for seq1, align2: str alignment for seq2, score: float best alignment score)
     """
-    def gen_backtrack(seq1, seq2, sigma=11, epsilon=1):
+    def gen_backtrack(seq1, seq2, sigma=11, epsilon=1, mode='pairwise'):
         """
+        :param mode:
         :param seq1: str input protein sequence 1
         :param seq2: str input protein sequence 2
         :param sigma: int penalty for opening a gap
         :param epsilon: int penalty for extending a gap
         :return: tuple (backtracks: list [3 np.array backtracks for gap1, match, and gap2], score: float best alignment score)
         """
-        def read_penalty(path):
-            """
-            :param path: str file path for penalty matrix
-            :return: list of lines in penalty matrix
-            """
-            with open(path, 'r') as infile:
-                return infile.readlines()
-        # init penalty
-        penalty = read_penalty('C:/Users/lenovo/Downloads/rosalind_penalty.txt')
-        penalty_matrix = [[eval(num) for num in line.strip().split()] for line in penalty]
-        aa_idx = {'A': 0, 'C': 1, 'D': 2, 'E': 3, 'F': 4, 'G': 5, 'H': 6, 'I': 7, 'K': 8, 'L': 9, 'M': 10,
-                       'N': 11, 'P': 12, 'Q': 13, 'R': 14, 'S': 15, 'T': 16, 'V': 17, 'W': 18, 'Y': 19}
+        # def read_penalty(path):
+        #     """
+        #     :param path: str file path for penalty matrix
+        #     :return: list of lines in penalty matrix
+        #     """
+        #     with open(path, 'r') as infile:
+        #         return infile.readlines()
+        # # init penalty
+        # penalty = read_penalty('C:/Users/lenovo/Downloads/rosalind_penalty.txt')
+        # penalty_matrix = [[eval(num) for num in line.strip().split()] for line in penalty]
+        # aa_idx = {'A': 0, 'C': 1, 'D': 2, 'E': 3, 'F': 4, 'G': 5, 'H': 6, 'I': 7, 'K': 8, 'L': 9, 'M': 10,
+        #                'N': 11, 'P': 12, 'Q': 13, 'R': 14, 'S': 15, 'T': 16, 'V': 17, 'W': 18, 'Y': 19}
         len1 = len(seq1)
         len2 = len(seq2)
         # init scores
@@ -102,8 +105,8 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, pe
                     gap2_back[pos1][pos2] = 'gap2'
                 # Last, consider we are now in match state
                 # do we continue with gaps / do a match?
-                match_match_score = match_scores[pos1 - 1, pos2 - 1] + \
-                                    penalty_matrix[aa_idx[seq1[pos1-1]]][aa_idx[seq2[pos2-1]]]
+                # match_match_score = match_scores[pos1 - 1, pos2 - 1] + penalty_matrix[aa_idx[seq1[pos1-1]]][aa_idx[seq2[pos2-1]]]
+                match_match_score = match_scores[pos1 - 1, pos2 - 1] + mat[seq1[pos1-1] + seq2[pos2-1]]
                 best_score = np.max([gap1_best_score, match_match_score, gap2_best_score])
                 match_scores[pos1, pos2] = best_score
                 if best_score == match_match_score:
@@ -113,8 +116,9 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, pe
                 elif best_score == gap1_best_score:
                     match_back[pos1][pos2] = 'gap1'
         return [gap1_back, match_back, gap2_back], match_scores[len1, len2]
-    def gen_alignment_from_backtrack(backtracks, seq1, seq2):
+    def gen_alignment_from_backtrack(backtracks, seq1, seq2, mode='pairwise'):
         """
+        :param mode:
         :param backtracks: list [3 np.array backtracks for gap1, match, and gap2]
         :param seq1: str input protein sequence 1
         :param seq2: str input protein sequence 2
@@ -164,48 +168,58 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma=11, epsilon=1, pe
                     state = prev_state
         # when we are at the start, we return results
         return align1, align2
-    backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon)
-    align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2)
+    backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode)
+    align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode)
     return align1[::-1], align2[::-1], score
 
-#----------NOT IMPLEMENTED------------------#
+"""
+GREEDY ALGO FOR MSA BASED ON PAIR-WISE GLOBAL ALIGNMENT
+"""
 def greedy_multiple_alignment_with_affine_gap_penalties(seqs, sigma=11, epsilon=1):
-    def find_best_pair_alignment(seqs):
+    def init_best_pair_alignment(seqs, sigma=11, epsilon=1):
+        """
+        :param seqs: list collection of multiple input protein sequences
+        :return: tuple (best_pair: tuple best pair of sequences, best_align: list best pair-wise alignment result)
+        """
         best_pair = None
         best_score = -inf
         best_align = None
+        # iterate through all seqs to find the best pair-wise alignment
         for pos1 in range(len(seqs) - 1):
             for pos2 in range(pos1 + 1, len(seqs)):
                 seq1 = seqs[pos1]
                 seq2 = seqs[pos2]
-                align1, align2, curr_score = affine_gap_penalties_pair_wise_alignment(seq1, seq2)
+                align1, align2, curr_score = affine_gap_penalties_pair_wise_alignment(seq1, seq2, sigma, epsilon, mode='pairwise')
                 if curr_score > best_score:
                     best_score = curr_score
                     best_pair = (seq1, seq2)
                     best_align = [align1, align2]
         return best_pair, best_align
-    def gen_penalty_from_alignment(alignments):
-        return
+    def add_one_seq_to_alignment(unaligned_seqs, alignment, sigma=11, epsilon=1):
+        # find the best seq to add to alignment
+        best_align1 = None
+        best_score = -inf
+        best_raw_seq = None
+        for seq in unaligned_seqs:
+            align1, align2, curr_score = affine_gap_penalties_pair_wise_alignment(seq, alignment, sigma, epsilon, mode='profile')
+            if curr_score > best_score:
+                best_align1 = align1
+                best_score = curr_score
+                best_raw_seq = seq
+        alignment.append(best_align1)
+        unaligned_seqs.remove(best_raw_seq)
+        return unaligned_seqs, alignment
     # first, we find the pair with highest score
-    best_pair, best_align = find_best_pair(seqs)
-    # init all_alignment contains as the best pair alignment
-    all_alignments = best_align
+    best_pair, curr_align = init_best_pair_alignment(seqs, sigma, epsilon)
     # record aligned seqs
-    aligned = list(best_pair)
-    #--------------------------------------------#
-    # STARTING FROM HERE, ALL ARE PSEUDO CODES - 2022.11.1 23:21
-    #--------------------------------------------#
+    unaligned_seqs = [seq_ for seq_ in seqs if seq_ not in best_pair]
     # while not all aligned
-    while len(aligned) < len(seqs):
-        # generate penalty matrix based on current alignment
-        curr_penalty = gen_penalty_from_alignment(all_alignments)
-        # 'align' to profile by using specific penalty matrix
-        affine_gap_penalties_pair_wise_alignment(seq1, 'A SEQUENCE OF SAME LENGTH OF all_alignment', curr_penalty)
-    # alignment_pro
-    # keep track which ones aligned
+    while unaligned_seqs:
+        unaligned_seqs, curr_align = add_one_seq_to_alignment(unaligned_seqs, curr_align, sigma, epsilon)
+    return curr_align
+
+
 #----------NOT IMPLEMENTED------------------#
-
-
 """
 TEST CASES
 """
