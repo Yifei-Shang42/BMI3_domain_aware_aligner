@@ -1,0 +1,514 @@
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:z="http://www.zotero.org/namespaces/export#"
+ xmlns:dcterms="http://purl.org/dc/terms/"
+ xmlns:bib="http://purl.org/net/biblio#"
+ xmlns:foaf="http://xmlns.com/foaf/0.1/"
+ xmlns:link="http://purl.org/rss/1.0/modules/link/"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:prism="http://prismstandard.org/namespaces/1.2/basic/">
+    <bib:Article rdf:about="https://doi.org/10.1186/1471-2105-14-184">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf rdf:resource="urn:issn:1471-2105"/>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Hatem</foaf:surname>
+                        <foaf:givenName>Ayat</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Bozdağ</foaf:surname>
+                        <foaf:givenName>Doruk</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Toland</foaf:surname>
+                        <foaf:givenName>Amanda E.</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Çatalyürek</foaf:surname>
+                        <foaf:givenName>Ümit V.</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_88"/>
+        <link:link rdf:resource="#item_89"/>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>短序列映射</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>基准</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>新一代测序</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>序列分析</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:title>Benchmarking short sequence mapping tools</dc:title>
+        <dcterms:abstract>The development of next-generation sequencing instruments has led to the generation of millions of short sequences in a single run. The process of aligning these reads to a reference genome is time consuming and demands the development of fast and accurate alignment tools. However, the current proposed tools make different compromises between the accuracy and the speed of mapping. Moreover, many important aspects are overlooked while comparing the performance of a newly developed tool to the state of the art. Therefore, there is a need for an objective evaluation method that covers all the aspects. In this work, we introduce a benchmarking suite to extensively analyze sequencing tools with respect to various aspects and provide an objective comparison.</dcterms:abstract>
+        <dc:date>2013-06-07</dc:date>
+        <z:libraryCatalog>BioMed Central</z:libraryCatalog>
+        <dc:identifier>
+            <dcterms:URI>
+               <rdf:value>https://doi.org/10.1186/1471-2105-14-184</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-05-16 23:05:20</dcterms:dateSubmitted>
+        <bib:pages>184</bib:pages>
+    </bib:Article>
+    <bib:Journal rdf:about="urn:issn:1471-2105">
+        <prism:volume>14</prism:volume>
+        <dc:title>BMC Bioinformatics</dc:title>
+        <dc:identifier>DOI 10.1186/1471-2105-14-184</dc:identifier>
+        <prism:number>1</prism:number>
+        <dcterms:alternative>BMC Bioinformatics</dcterms:alternative>
+        <dc:identifier>ISSN 1471-2105</dc:identifier>
+    </bib:Journal>
+    <z:Attachment rdf:about="#item_88">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Full Text PDF</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/1471-2105-14-184</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-05-16 23:05:23</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>application/pdf</link:type>
+    </z:Attachment>
+    <z:Attachment rdf:about="#item_89">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Snapshot</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-184#Sec18</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-05-16 23:05:27</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Article rdf:about="http://cshprotocols.cshlp.org/content/2009/7/pdb.top41">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf rdf:resource="urn:issn:1940-3402,%201559-6095"/>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Mount</foaf:surname>
+                        <foaf:givenName>David W.</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_132"/>
+        <link:link rdf:resource="#item_135"/>
+        <dc:title>Using Hidden Markov Models to Align Multiple Sequences</dc:title>
+        <dcterms:abstract>INTRODUCTION
+A hidden Markov model (HMM) is a probabilistic model of a multiple sequence alignment (msa) of proteins. In the model, each column of symbols in the alignment is represented by a frequency distribution of the symbols (called a “state”), and insertions and deletions are represented by other states. One moves through the model along a particular path from state to state in a Markov chain (i.e., random choice of next move), trying to match a given sequence. The next matching symbol is chosen from each state, recording its probability (frequency) and also the probability of going to that state from a previous one (the transition probability). State and transition probabilities are multiplied to obtain a probability of the given sequence. The hidden nature of the HMM is due to the lack of information about the value of a specific state, which is instead represented by a probability distribution over all possible values. This article discusses the advantages and disadvantages of HMMs in msa and presents algorithms for calculating an HMM and the conditions for producing the best HMM.</dcterms:abstract>
+        <dc:date>07/01/2009</dc:date>
+        <z:language>en</z:language>
+        <z:libraryCatalog>cshprotocols.cshlp.org</z:libraryCatalog>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>http://cshprotocols.cshlp.org/content/2009/7/pdb.top41</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:49:19</dcterms:dateSubmitted>
+        <dc:description>Publisher: Cold Spring Harbor Laboratory Press
+PMID: 20147223</dc:description>
+        <bib:pages>pdb.top41</bib:pages>
+    </bib:Article>
+    <bib:Journal rdf:about="urn:issn:1940-3402,%201559-6095">
+        <prism:volume>2009</prism:volume>
+        <dc:title>Cold Spring Harbor Protocols</dc:title>
+        <dc:identifier>DOI 10.1101/pdb.top41</dc:identifier>
+        <prism:number>7</prism:number>
+        <dcterms:alternative>Cold Spring Harb Protoc</dcterms:alternative>
+        <dc:identifier>ISSN 1940-3402, 1559-6095</dc:identifier>
+    </bib:Journal>
+    <z:Attachment rdf:about="#item_132">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>PubMed entry</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+               <rdf:value>http://www.ncbi.nlm.nih.gov/pubmed/20147223</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:49:21</dcterms:dateSubmitted>
+        <z:linkMode>3</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <z:Attachment rdf:about="#item_135">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Snapshot</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>http://cshprotocols.cshlp.org/content/2009/7/pdb.top41.full</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:49:41</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Article rdf:about="#item_134">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf>
+           <bib:Journal></bib:Journal>
+        </dcterms:isPartOf>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Eddy</foaf:surname>
+                        <foaf:givenName>Sean R</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_133"/>
+        <dc:title>Multiple Alignment Using Hidden Markov Models</dc:title>
+        <dcterms:abstract>Asimulated annealing methodis described for training hidden Markovmodels and producing multiple sequencealignments frominitially unaligned protein or DNAsequences. Simulated annealing in turn uses a dynamic programmingalgorithm for correctly sampling suboptimal multiple alignments according to their probability and a Boltzmanntemperature factor. The quality of simulated annealing alignments is evaluated on structural alignmentsof ten different protein families, and comparedto the performance of other HMMtraining methods and the ClnstalW program. Simulated annealing is better able to find near-global optima in the multiple alignment probability landscape than the other tested HMMtraining methods. Neither ClustalW nor simulated annealing produce consistently better alignments comparedto each other. Examinationof the specific cases in which ClustalW outperforms simulated annealing, and vice versa, provides insight into the strengths and weaknesses of current hidden Markovmodelapproaches.</dcterms:abstract>
+        <z:language>en</z:language>
+        <z:libraryCatalog>Zotero</z:libraryCatalog>
+        <bib:pages>7</bib:pages>
+    </bib:Article>
+    <z:Attachment rdf:about="#item_133">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Eddy - Multiple Alignment Using Hidden Markov Models.pdf</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.aaai.org/Papers/ISMB/1995/ISMB95-014.pdf</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:49:30</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>application/pdf</link:type>
+    </z:Attachment>
+    <bib:Article rdf:about="https://doi.org/10.1186/s12859-019-3132-7">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf>
+            <bib:Journal>
+                <prism:volume>20</prism:volume>
+                <dc:title>BMC Bioinformatics</dc:title>
+                <dc:identifier>DOI 10.1186/s12859-019-3132-7</dc:identifier>
+                <prism:number>18</prism:number>
+                <dcterms:alternative>BMC Bioinformatics</dcterms:alternative>
+                <dc:identifier>ISSN 1471-2105</dc:identifier>
+            </bib:Journal>
+        </dcterms:isPartOf>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Zhan</foaf:surname>
+                        <foaf:givenName>Qing</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Wang</foaf:surname>
+                        <foaf:givenName>Nan</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Jin</foaf:surname>
+                        <foaf:givenName>Shuilin</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Tan</foaf:surname>
+                        <foaf:givenName>Renjie</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Jiang</foaf:surname>
+                        <foaf:givenName>Qinghua</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Wang</foaf:surname>
+                        <foaf:givenName>Yadong</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_137"/>
+        <link:link rdf:resource="#item_138"/>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>多序列比对</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>分区功能</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>粒子群优化</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>隐马尔可夫模型</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:title>ProbPFP: a multiple sequence alignment algorithm combining hidden Markov model optimized by particle swarm optimization with partition function</dc:title>
+        <dcterms:abstract>During procedures for conducting multiple sequence alignment, that is so essential to use the substitution score of pairwise alignment. To compute adaptive scores for alignment, researchers usually use Hidden Markov Model or probabilistic consistency methods such as partition function. Recent studies show that optimizing the parameters for hidden Markov model, as well as integrating hidden Markov model with partition function can raise the accuracy of alignment. The combination of partition function and optimized HMM, which could further improve the alignment’s accuracy, however, was ignored by these researches.</dcterms:abstract>
+        <dc:date>2019-11-25</dc:date>
+        <z:shortTitle>ProbPFP</z:shortTitle>
+        <z:libraryCatalog>BioMed Central</z:libraryCatalog>
+        <dc:identifier>
+            <dcterms:URI>
+               <rdf:value>https://doi.org/10.1186/s12859-019-3132-7</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:54:34</dcterms:dateSubmitted>
+        <bib:pages>573</bib:pages>
+    </bib:Article>
+    <z:Attachment rdf:about="#item_137">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Full Text PDF</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://bmcbioinformatics.biomedcentral.com/counter/pdf/10.1186/s12859-019-3132-7</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:54:37</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>application/pdf</link:type>
+    </z:Attachment>
+    <z:Attachment rdf:about="#item_138">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>Snapshot</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-3132-7</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 12:54:43</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Document rdf:about="https://www.ebi.ac.uk/Tools/msa/">
+        <z:itemType>webpage</z:itemType>
+        <dcterms:isPartOf>
+           <z:Website></z:Website>
+        </dcterms:isPartOf>
+        <link:link rdf:resource="#item_142"/>
+        <dc:title>用于多序列比对的生物信息学工具 &lt; EMBL-EBI</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+               <rdf:value>https://www.ebi.ac.uk/Tools/msa/</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 13:30:24</dcterms:dateSubmitted>
+    </bib:Document>
+    <z:Attachment rdf:about="#item_142">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>用于多序列比对的生物信息学工具 &lt; EMBL-EBI</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+               <rdf:value>https://www.ebi.ac.uk/Tools/msa/</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-02 13:30:39</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Article rdf:about="https://www.sciencedirect.com/science/article/pii/S0022283600940427">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf rdf:resource="urn:issn:0022-2836"/>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Notredame</foaf:surname>
+                        <foaf:givenName>Cédric</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Higgins</foaf:surname>
+                        <foaf:givenName>Desmond G</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Heringa</foaf:surname>
+                        <foaf:givenName>Jaap</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_150"/>
+        <link:link rdf:resource="#item_151"/>
+        <dc:subject>
+            <z:AutomaticTag>
+               <rdf:value>global alignment</rdf:value>
+            </z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+           <z:AutomaticTag><rdf:value>local alignment</rdf:value></z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+            <z:AutomaticTag>
+               <rdf:value>multiple sequence alignment</rdf:value>
+            </z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+            <z:AutomaticTag>
+               <rdf:value>pair-wise alignment</rdf:value>
+            </z:AutomaticTag>
+        </dc:subject>
+        <dc:subject>
+            <z:AutomaticTag>
+               <rdf:value>progressive alignment</rdf:value>
+            </z:AutomaticTag>
+        </dc:subject>
+        <dc:title>T-coffee: a novel method for fast and accurate multiple sequence alignment11Edited by J. Thornton</dc:title>
+        <dcterms:abstract>We describe a new method (T-Coffee) for multiple sequence alignment that provides a dramatic improvement in accuracy with a modest sacrifice in speed as compared to the most commonly used alternatives. The method is broadly based on the popular progressive approach to multiple alignment but avoids the most serious pitfalls caused by the greedy nature of this algorithm. With T-Coffee we pre-process a data set of all pair-wise alignments between the sequences. This provides us with a library of alignment information that can be used to guide the progressive alignment. Intermediate alignments are then based not only on the sequences to be aligned next but also on how all of the sequences align with each other. This alignment information can be derived from heterogeneous sources such as a mixture of alignment programs and/or structure superposition. Here, we illustrate the power of the approach by using a combination of local and global pair-wise alignments to generate the library. The resulting alignments are significantly more reliable, as determined by comparison with a set of 141 test cases, than any of the popular alternatives that we tried. The improvement, especially clear with the more difficult test cases, is always visible, regardless of the phylogenetic spread of the sequences in the tests.</dcterms:abstract>
+        <dc:date>2000-09-08</dc:date>
+        <z:language>en</z:language>
+        <z:shortTitle>T-coffee</z:shortTitle>
+        <z:libraryCatalog>ScienceDirect</z:libraryCatalog>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.sciencedirect.com/science/article/pii/S0022283600940427</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:17</dcterms:dateSubmitted>
+        <bib:pages>205-217</bib:pages>
+    </bib:Article>
+    <bib:Journal rdf:about="urn:issn:0022-2836">
+        <prism:volume>302</prism:volume>
+        <dc:title>Journal of Molecular Biology</dc:title>
+        <dc:identifier>DOI 10.1006/jmbi.2000.4042</dc:identifier>
+        <prism:number>1</prism:number>
+        <dcterms:alternative>Journal of Molecular Biology</dcterms:alternative>
+        <dc:identifier>ISSN 0022-2836</dc:identifier>
+    </bib:Journal>
+    <z:Attachment rdf:about="#item_150">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>ScienceDirect Full Text PDF</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.sciencedirect.com/science/article/pii/S0022283600940427/pdfft?md5=f2bf4b1bfbe1510bc3bc2d5372bd658d&amp;pid=1-s2.0-S0022283600940427-main.pdf&amp;isDTMRedir=Y</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:21</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>application/pdf</link:type>
+    </z:Attachment>
+    <z:Attachment rdf:about="#item_151">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>ScienceDirect Snapshot</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.sciencedirect.com/science/article/pii/S0022283600940427</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:40</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Article rdf:about="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7586916/">
+        <z:itemType>journalArticle</z:itemType>
+        <dcterms:isPartOf rdf:resource="urn:issn:0961-8368"/>
+        <bib:authors>
+            <rdf:Seq>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Trivedi</foaf:surname>
+                        <foaf:givenName>Rakesh</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+                <rdf:li>
+                    <foaf:Person>
+                        <foaf:surname>Nagarajaram</foaf:surname>
+                        <foaf:givenName>Hampapathalu Adimurthy</foaf:givenName>
+                    </foaf:Person>
+                </rdf:li>
+            </rdf:Seq>
+        </bib:authors>
+        <link:link rdf:resource="#item_156"/>
+        <link:link rdf:resource="#item_153"/>
+        <dc:title>Substitution scoring matrices for proteins ‐ An overview</dc:title>
+        <dcterms:abstract>Sequence analysis is the primary and simplest approach to discover structural, functional and evolutionary details of related proteins. All the alignment based approaches of sequence analysis make use of amino acid substitution matrices, and the accuracy of the results largely depends on the type of scoring matrices used to perform alignment tasks. An amino acid substitution matrix is a 20 × 20 matrix in which the individual elements encapsulate the rates at which each of the 20 amino acid residues in proteins are substituted by other amino acid residues over time. In contrast to most globular/ordered proteins whose amino acids composition is considered as standard, there are several classes of proteins (e.g., transmembrane proteins) in which certain types of amino acid (e.g., hydrophobic residues) are enriched. These compositional differences among various classes of proteins are manifested in their underlying residue substitution frequencies. Therefore, each of the compositionally distinct class of proteins or protein segments should be studied using specific scoring matrices that reflect their distinct residue substitution pattern. In this review, we describe the development and application of various substitution scoring matrices peculiar to proteins with standard and biased compositions. Along with most commonly used standard matrices (PAM, BLOSUM, MD and VTML) that act as default parameters in various homologs search and alignment tools, different substitution scoring matrices specific to compositionally distinct class of proteins are discussed in detail.</dcterms:abstract>
+        <dc:date>2020-11</dc:date>
+        <z:libraryCatalog>PubMed Central</z:libraryCatalog>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7586916/</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:55</dcterms:dateSubmitted>
+        <dc:description>PMID: 32954566
+PMCID: PMC7586916</dc:description>
+        <bib:pages>2150-2163</bib:pages>
+    </bib:Article>
+    <bib:Journal rdf:about="urn:issn:0961-8368">
+        <prism:volume>29</prism:volume>
+        <dc:title>Protein Science : A Publication of the Protein Society</dc:title>
+        <dc:identifier>DOI 10.1002/pro.3954</dc:identifier>
+        <prism:number>11</prism:number>
+        <dcterms:alternative>Protein Sci</dcterms:alternative>
+        <dc:identifier>ISSN 0961-8368</dc:identifier>
+    </bib:Journal>
+    <z:Attachment rdf:about="#item_156">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>PubMed Central Full Text PDF</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7586916/pdf/PRO-29-2150.pdf</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:07:20</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>application/pdf</link:type>
+    </z:Attachment>
+    <z:Attachment rdf:about="#item_153">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>PubMed Central Link</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7586916/</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:56</dcterms:dateSubmitted>
+        <z:linkMode>3</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+    <bib:Document rdf:about="http://www.bioinformaticsonline.org/ch/ch03/supp-4.html">
+        <z:itemType>webpage</z:itemType>
+        <dcterms:isPartOf>
+           <z:Website></z:Website>
+        </dcterms:isPartOf>
+        <link:link rdf:resource="#item_155"/>
+        <dc:title>生物信息学在线.org</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>http://www.bioinformaticsonline.org/ch/ch03/supp-4.html</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:06:59</dcterms:dateSubmitted>
+    </bib:Document>
+    <z:Attachment rdf:about="#item_155">
+        <z:itemType>attachment</z:itemType>
+        <dc:title>生物信息学在线.org</dc:title>
+        <dc:identifier>
+            <dcterms:URI>
+                <rdf:value>http://www.bioinformaticsonline.org/ch/ch03/supp-4.html</rdf:value>
+            </dcterms:URI>
+        </dc:identifier>
+        <dcterms:dateSubmitted>2022-11-07 12:07:17</dcterms:dateSubmitted>
+        <z:linkMode>1</z:linkMode>
+        <link:type>text/html</link:type>
+    </z:Attachment>
+</rdf:RDF>
