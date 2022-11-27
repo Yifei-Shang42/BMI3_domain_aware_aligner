@@ -50,7 +50,7 @@ def sequence_to_domain_structure(prot_id, seq, all_domains):
     """
     # if this id does not contain known domain, we treat entire sequence as a big linker
     if prot_id not in all_domains:
-        print(prot_id + ' not found in UniProt Domain Database! Proceeding as Linker')
+        print(prot_id + ' not found in UniProt Domain Database! Proceeding as _unknown_')
         return {'linker1_': [0, len(seq)-1],
                 'structure_list_': ['linker1_']}
     # get protein length
@@ -89,8 +89,8 @@ def sequence_to_domain_structure(prot_id, seq, all_domains):
 """
 TEST CASES
 """
-all_domains = parse_panda_to_dict()
-print(sequence_to_domain_structure('A0A024SH76', '', all_domains)) # dont do this, this empty string is used only if id not in all_domains
+# all_domains = parse_panda_to_dict()
+# print(sequence_to_domain_structure('A0A024SH76', '', all_domains)) # dont do this, this empty string is used only if id not in all_domains
 
 
 

@@ -2,6 +2,7 @@
 BMI3 Group5 Project4: Domain-aware aligner
 """
 
+
 import numpy as np
 from math import inf
 import blosum as bl
@@ -39,11 +40,8 @@ def parse_txt_to_dict(path):
     return fasta_dict
 
 
-hugo_crk_input_dict = parse_txt_to_dict('ICA/BMI3_domain_aware_aligner/CRK_aln.txt')
-
-
 """
-PAIR-WISE GLOBAL ALIGNMENT WITH AFFINE GAP PENALTY
+CORE ALGORITHM: PAIR-WISE GLOBAL ALIGNMENT WITH AFFINE GAP PENALTY
 """
 
 
@@ -263,7 +261,7 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
 
 
 """
-GREEDY ALGO FOR MSA BASED ON PAIR-WISE GLOBAL ALIGNMENT
+(DEPRECATED) GREEDY ALGO FOR MSA BASED ON PAIR-WISE GLOBAL ALIGNMENT: !NOT CONSIDERING DOMAIN!
 """
 
 
@@ -352,15 +350,14 @@ def greedy_multiple_alignment_with_affine_gap_penalties(seqs, sigma=11, epsilon=
 
 
 """
-GREEDY MSA DOMAIN AWARE ALIGNER
+MAIN ALGORITHM: GREEDY MSA DOMAIN AWARE ALIGNER
 """
 
 
-def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
+def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
     """
     :param all_domains: dict preconstructed dictionary from UniProt
-    :param ids: list of str UniProt IDs of seqs
-    :param seqs: list of str raw strings for MSA input
+    :param id_seq_dict: dict {id: seq, ...}
     :param sigma: int penalty for opening a gap
     :param epsilon: int penalty for extending a gap
     :return: dict {structure_identifier: {}, ...}
@@ -381,7 +378,10 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
             domain_structure_list = curr_domain_info['structure_list_']
             domain_structure_list_no_linkers = [name for name in domain_structure_list if name[-1] != '_']
             # unique identifier of a sequence is all domain names separated by '---' Example: 'KH 1---DH---VHS' 3 domains
-            structure_identifier = '---'.join(domain_structure_list_no_linkers)
+            if not domain_structure_list_no_linkers:
+                structure_identifier = '_unknown_'
+            else:
+                structure_identifier = '---'.join(domain_structure_list_no_linkers)
             if structure_identifier not in categories:
                 categories[structure_identifier] = {'seqs': [curr_seq], 'ids': [curr_id]}
             else:
@@ -414,7 +414,12 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
         :param epsilon: int penalty for extending a gap
         :return: tuple (best_pair: tuple best pair of sequences, best_align: list best pair-wise alignment result)
         """
+        # if a single category, we return itself
+        if len(seqs) == 1:
+            return -1, seqs
+        # if not, we start to look for the best pair
         best_pair = None
+        best_id_pair = None
         best_score = -inf
         best_align = None
         # iterate through all seqs to find the best pair-wise alignment
@@ -425,8 +430,11 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
                 # use id to extract domain structure list
                 id1 = ids[pos1]
                 id2 = ids[pos2]
-                seq1_structure_dict = sequence_to_domain_structure(id1, all_domains)
-                seq2_structure_dict = sequence_to_domain_structure(id2, all_domains)
+                ##########
+                # print('Checking if '+id1+' and '+id2+' are best init alignment')  # testing only, output too long...
+                ##########
+                seq1_structure_dict = sequence_to_domain_structure(id1, seq1, all_domains)
+                seq2_structure_dict = sequence_to_domain_structure(id2, seq2, all_domains)
                 # split both sequences to domains & linkers, because same category, should be split in exact same way
                 seq1_split = split_seq_by_structure_dict(seq1_structure_dict, seq1)
                 seq2_split = split_seq_by_structure_dict(seq2_structure_dict, seq2)
@@ -448,8 +456,14 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
                     final_score += curr_score
                 if final_score > best_score:
                     best_score = curr_score
+                    best_id_pair = (id1, id2)
                     best_pair = (seq1_split, seq2_split)
                     best_align = [final_align1, final_align2]
+        ###################
+        print('Best initial pair found: '+best_id_pair[0]+', '+best_id_pair[1])
+        print(best_id_pair[0]+' and '+best_id_pair[1]+' has been aligned! '+str(len(ids)-2)+' proteins to be aligned...')
+        print('-------------------------------------------------------')
+        ###################
         return best_pair, best_align
 
     def add_one_seq_to_alignment_domain_based(unaligned_ids, unaligned_seqs, alignment, sigma, epsilon, all_domains):
@@ -462,25 +476,43 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
         :return: tuple (unaligned_seqs: list of unaligned sequences excluding the newly added seq,
         alignment_new: list of new alignment sequences)
         """
-        def update_alignment(alignment, align2_dummy):
+        def update_alignment(alignment, align2_dummy, mode='string'):
             """
+            :param mode: str "domain": input list, or "string": input string
             :param alignment: list of old alignment strings
             :param align2_dummy: str align2 generated recording information about new gaps to be added in old alignments
             :return: alignment_new: list of updated alignment strings with new gaps added
             """
-            alignment_new = []
-            for align in alignment:
-                align_new = ''
-                align_pos = 0
-                for pos in range(len(align2_dummy)):
-                    if align2_dummy[pos] == '-':
-                        align_new += '-'
-                    else:
-                        align_new += align[align_pos]
-                        align_pos += 1
-                alignment_new.append(align_new)
+            assert mode in ['domain', 'string'], 'Invalid Mode! mode in update alignment must be domain or string!'
+            # alignment_new = []
+            # base case: if input is a single string, not split by domains
+            if mode == 'string':
+                # init result as 1d list
+                alignment_new = []
+                for align in alignment:
+                    align_new = ''
+                    align_pos = 0
+                    for pos in range(len(align2_dummy)):
+                        if align2_dummy[pos] == '-':
+                            align_new += '-'
+                        else:
+                            align_new += align[align_pos]
+                            align_pos += 1
+                    alignment_new.append(align_new)
+            # if input is list split by domains, we do string mode for each fragment
+            elif mode == 'domain':
+                # init result as 2d list
+                alignment_new = [[] for _ in range(len(alignment))]
+                for frag_pos in range(len(alignment[0])):
+                    # get a column in alignment
+                    curr_align_ = [align[frag_pos] for align in alignment]
+                    curr_dummy = align2_dummy[frag_pos]
+                    # for each fragment, we can use string mode to get a column
+                    new_align = update_alignment(curr_align_, curr_dummy, mode='string')
+                    # now we have 1 column, but we need to append by row
+                    for i in range(len(new_align)):
+                        alignment_new[i].append(new_align[i])
             return alignment_new
-
         # find the best seq to add to alignment
         best_align1 = None
         best_align2 = None
@@ -522,48 +554,84 @@ def domain_aware_greedy_MSA(all_domains, ids, seqs, sigma=11, epsilon=1):
                 best_raw_id = curr_id
         # update the existing alignment based on new gap information recorded in align2_dummy,
         # we need dummy align2 to guide how to make gaps in previous alignments
-        alignment_new = update_alignment(alignment, best_align2)  ###########################NOT UPDATED################
+        alignment_new = update_alignment(alignment, best_align2, mode='domain')
         # add this best align to the now gapped previous alignments
-        # because each sequence/alignment is fragmented (str -> lists), so we update fragment-wise
-        for pos in range(len(best_align1)):
-            alignment_new[pos].append(best_align1[pos])
+        alignment_new.append(best_align1)
         # update unaligned seqs and ids
         # contrary to updating 2d alignments, both are 1d lists, so we can simply remove
         unaligned_seqs.remove(best_raw_seq)
         unaligned_ids.remove(best_raw_id)
+        ###################
+        print(best_raw_id+' has been aligned! '+str(len(unaligned_ids))+' proteins to be aligned...')
+        ###################
+        print('-------------------------------------------------------')
         # we successfully expanded our alignment by 1!
         return unaligned_seqs, alignment_new
-
-
-
+    ######################
+    print('-------------------------------------------------------')
+    print('Domain-based Greedy MSA started...')
+    print('-------------------------------------------------------')
+    print('Categorizing '+str(len(id_seq_dict))+' sequences')
+    ######################
+    # extract ids & seqs from input dictionary
+    ids = list(id_seq_dict.keys())
+    seqs = list(id_seq_dict.values())
     # split seqs into categories
     categories = categorize_seqs_by_domain_info(all_domains, ids, seqs)
+    ######################
+    print('Sequence Categorization Complete')
+    print('-------------------------------------------------------')
+    print(str(len(categories))+' distinct domain-combinations found, they are (separated by "---"): ')
+    for key in list(categories.keys()):
+        print(key+' : '+str(len(categories[key]['seqs']))+' sequences')
+    print('-------------------------------------------------------')
+    ######################
     # init alignment
     alignments = categories.copy()
     # greedy MSA for each categories
     for structure_identifier in categories:
+        ######################
+        print('Performing greedy MSA on '+str(len(categories[structure_identifier]['seqs']))+' sequences of structure '+structure_identifier)
+        ######################
         # extract seqs & ids for this category
         curr_seqs = categories[structure_identifier]['seqs']
         curr_ids = categories[structure_identifier]['ids']
+        ######################
+        print('-------------------------------------------------------')
+        print('Looking for best initial pair...')
+        ######################
         best_pair, curr_align = init_best_pair_alignment_domain_based(curr_ids, curr_seqs,
                                                                       sigma, epsilon, all_domains)
-        unaligned_seqs = [seq_ for seq_ in curr_seqs if seq_ not in best_pair]
-        unaligned_ids = [id_ for id_ in curr_ids if id_ not in best_pair]
+        # check if this category contains only one sequence, if so, we record itself, proceed with next category
+        if best_pair == -1:
+            alignments[structure_identifier]['category_alignment'] = curr_seqs
+            continue
+        # we join fragments together to check for unaligned seqs & ids
+        joined_best_pair = [''.join(align_arr) for align_arr in best_pair]
+        unaligned_seqs = [seq_ for seq_ in curr_seqs if seq_ not in joined_best_pair]
+        unaligned_ids = [id_ for id_ in curr_ids if id_seq_dict[id_] not in joined_best_pair]
         # while not all aligned
+        ######################
+        if unaligned_seqs:
+            print('Extending alignment '+structure_identifier+'...')
+            print('-------------------------------------------------------')
+        ######################
         while unaligned_seqs:
-            unaligned_seqs, curr_align = add_one_seq_to_alignment_domain_based(structure_identifier,
-                                                                               unaligned_ids,
+            unaligned_seqs, curr_align = add_one_seq_to_alignment_domain_based(unaligned_ids,
                                                                                unaligned_seqs, curr_align,
-                                                                               sigma, epsilon)
+                                                                               sigma, epsilon, all_domains)
         # now the alignment process finished, our curr_align is still fragmented (2d list instead of 1d)
         # IF WE WANT DIRECT OUTPUT, we concatenate fragmented alignment right now, but this cost domain information
         # I'm not sure on 2022.11.27, so I concatenated anyway, different modes could be set later
         concat_final_alignment = [''.join(align_list) for align_list in curr_align]
         # record alignment for this category
         alignments[structure_identifier]['category_alignment'] = concat_final_alignment
+    ######################
+    print('-------------------------------------------------------')
+    print('Domain-based Greedy MSA finished!')
+    print('-------------------------------------------------------')
+    ######################
     return alignments
-
-
 
 
 """
@@ -571,31 +639,40 @@ TEST CASES
 """
 
 
-# 2 seqs
-# two_seq_test_data_download_link = 'https://rosalind.info/problems/ba5j/'  <--------  DOWNLOAD LINK, YOU MAY NEED TO REGISTER & LOGIN
-def read_data(name):
-    with open('C:/Users/lenovo/Downloads/rosalind_'+name+'.txt','r') as infile:
-        return infile.readlines()
+# MAIN TEST: Hugo's CRK
+if __name__ == '__main__':
+    # parsing data & uniprot domain info
+    crk_data = parse_txt_to_dict('ICA/BMI3_domain_aware_aligner/CRK_aln.txt')
+    all_domains_crk = parse_panda_to_dict('ICA/BMI3_domain_aware_aligner/uniprot_crk.tsv')
+    # main algorithm
+    domain_alignment_result = domain_aware_greedy_MSA(all_domains_crk, crk_data)
+    # extracting alignments from result
+    print('Outputing results: ')
+    for structure in domain_alignment_result:
+        print('-------------------------------------------------------')
+        print('Alignment result for '+str(len(domain_alignment_result[structure]['seqs']))+' sequences of '+structure+' structure: ')
+        for alignment in domain_alignment_result[structure]['category_alignment']:
+            print(alignment)
+    print('-------------------------------------------------------')
 
-
-data = read_data('ba5j (2)')
-seq1 = data[0].strip()
-seq2 = data[1].strip()
-for seq in affine_gap_penalties_pair_wise_alignment(seq1, seq2):
-    print(seq)
-
-# 3 seqs
-data = read_data('ba5m')
-seq1 = data[0].strip()
-seq2 = data[1].strip()
-seq3 = data[2].strip()
-alignment = greedy_multiple_alignment_with_affine_gap_penalties([seq1, seq2, seq3])
-for align in alignment:
-    print(align)
-
-
-
-#######TEST##########
-# crk_categories = categorize_seqs_by_domain_info(all_domains, list(hugo_crk_input_dict.keys()),
-#                                                 list(hugo_crk_input_dict.values()))
-#######TEST##########
+# # 2 seqs
+# # two_seq_test_data_download_link = 'https://rosalind.info/problems/ba5j/'  <--------  DOWNLOAD LINK, YOU MAY NEED TO REGISTER & LOGIN
+# def read_data(name):
+#     with open('C:/Users/lenovo/Downloads/rosalind_'+name+'.txt','r') as infile:
+#         return infile.readlines()
+#
+#
+# data = read_data('ba5j (2)')
+# seq1 = data[0].strip()
+# seq2 = data[1].strip()
+# for seq in affine_gap_penalties_pair_wise_alignment(seq1, seq2):
+#     print(seq)
+#
+# # 3 seqs
+# data = read_data('ba5m')
+# seq1 = data[0].strip()
+# seq2 = data[1].strip()
+# seq3 = data[2].strip()
+# alignment = greedy_multiple_alignment_with_affine_gap_penalties([seq1, seq2, seq3])
+# for align in alignment:
+#     print(align)
