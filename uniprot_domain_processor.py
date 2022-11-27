@@ -41,19 +41,20 @@ def parse_panda_to_dict(domain_file_path='ICA/BMI3_domain_aware_aligner/uniprot_
     return all_domain_dict
 
 
-def sequence_to_domain_structure(prot_id, all_domains):
+def sequence_to_domain_structure(prot_id, seq, all_domains):
     """
+    :param seq: str sequence to extract domain from
     :param prot_id: str UniProt ID of sequence to extract domain from
     :param all_domains: dict preconstructed dictionary from UniProt
     :return: dict domain & linker locations of the sequence (0-index), structure list
     """
-    # get protein length
-    length = all_domains[prot_id]['length_']
     # if this id does not contain known domain, we treat entire sequence as a big linker
     if prot_id not in all_domains:
         print(prot_id + ' not found in UniProt Domain Database! Proceeding as Linker')
-        return {'linker1_': [0, length-1],
+        return {'linker1_': [0, len(seq)-1],
                 'structure_list_': ['linker1_']}
+    # get protein length
+    length = all_domains[prot_id]['length_']
     # if this id contains known domain(s), we find domain & linker positions
     entry = all_domains[prot_id]
     res = entry.copy()
@@ -89,7 +90,7 @@ def sequence_to_domain_structure(prot_id, all_domains):
 TEST CASES
 """
 all_domains = parse_panda_to_dict()
-print(sequence_to_domain_structure('A0A024SH76', all_domains))
+print(sequence_to_domain_structure('A0A024SH76', '', all_domains)) # dont do this, this empty string is used only if id not in all_domains
 
 
 
