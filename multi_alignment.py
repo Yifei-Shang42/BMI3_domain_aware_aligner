@@ -6,7 +6,7 @@ BMI3 Group5 Project4: Domain-aware aligner
 import numpy as np
 from math import inf
 import blosum as bl
-from ICA.BMI3_domain_aware_aligner.uniprot_domain_processor import *
+from uniprot_domain_processor import *
 mat = bl.BLOSUM(62)
 
 
@@ -642,8 +642,8 @@ TEST CASES
 # MAIN TEST: Hugo's CRK
 if __name__ == '__main__':
     # parsing data & uniprot domain info
-    crk_data = parse_txt_to_dict('ICA/BMI3_domain_aware_aligner/CRK_aln.txt')
-    all_domains_crk = parse_panda_to_dict('ICA/BMI3_domain_aware_aligner/uniprot_crk.tsv')
+    crk_data = parse_txt_to_dict('CRK_aln.txt')
+    all_domains_crk = parse_panda_to_dict('uniprot_crk.tsv')
     # main algorithm
     domain_alignment_result = domain_aware_greedy_MSA(all_domains_crk, crk_data)
     # extracting alignments from result
