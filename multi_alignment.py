@@ -626,6 +626,7 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
         concat_final_alignment = [''.join(align_list) for align_list in curr_align]
         # record alignment for this category
         alignments[structure_identifier]['category_alignment'] = concat_final_alignment
+        alignments[structure_identifier]['unconcat_align'] = curr_align
     ######################
     print('-------------------------------------------------------')
     print('Domain-based Greedy MSA finished!')

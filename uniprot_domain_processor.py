@@ -10,7 +10,7 @@ CONSTRUCT DICTIONARY
 """
 
 
-def parse_panda_to_dict(domain_file_path='ICA/BMI3_domain_aware_aligner/uniprot_reviewed_proteins_with_domains.tsv'):
+def parse_panda_to_dict(domain_file_path='uniprot_reviewed_proteins_with_domains.tsv'):
     """
     :param domain_file_path: str path of domain file
     :param domains_nonan: DataFrame: raw uniprot pandas
@@ -89,7 +89,8 @@ def sequence_to_domain_structure(prot_id, seq, all_domains):
 """
 TEST CASES
 """
-# all_domains = parse_panda_to_dict()
+# all_domains = parse_panda_to_dict('uniprot_reviewed_proteins_with_domains.tsv')
+# all_domains = parse_panda_to_dict('G:\PycharmProjects\BMI3\ICA\BMI3_domain_aware_aligner\uniprot_reviewed_proteins_with_domains.tsv')
 # print(sequence_to_domain_structure('A0A024SH76', '', all_domains)) # dont do this, this empty string is used only if id not in all_domains
 
 
