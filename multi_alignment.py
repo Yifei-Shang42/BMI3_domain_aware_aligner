@@ -95,9 +95,11 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         # init backtracks
         # what are backtracks:
         # they are matrices of the same dimension as score matrices, used to record the best previous position
-        match_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
-        gap1_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
-        gap2_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
+        match_back = [[0 for _ in range(len2+1)] for _ in range(len1+1)]
+        # first row of match_back should be 2, representing gap2
+        match_back[0] = [2 for _ in range(len2 + 1)]
+        gap1_back = [[0 for _ in range(len2+1)] for _ in range(len1+1)]
+        gap2_back = [[0 for _ in range(len2+1)] for _ in range(len1+1)]
         # at start position, all scores are 0
         gap1_scores[0, 0] = 0
         gap2_scores[0, 0] = 0
@@ -130,10 +132,10 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
                 # if we open gap:
                 if gap1_best_score == gap1_open_score:
                     # we record at gap1 backtrack as from match
-                    gap1_back[pos1][pos2] = 'match'
+                    gap1_back[pos1][pos2] = 1
                 else:
                     # if extend
-                    gap1_back[pos1][pos2] = 'gap1'
+                    gap1_back[pos1][pos2] = 0
                 # Then, consider we are now in gap2
                 # to best get to gap 2, do we open new gap? or extend existing gap?
                 # if we extend, we move horizontally in gap2 state
@@ -145,9 +147,9 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
                 # if we should open gap:
                 if gap2_best_score == gap2_open_score:
                     # we record at gap1 backtrack as from match
-                    gap2_back[pos1][pos2] = 'match'
+                    gap2_back[pos1][pos2] = 1
                 else:
-                    gap2_back[pos1][pos2] = 'gap2'
+                    gap2_back[pos1][pos2] = 2
                 # Last, consider we are now in match state
                 # do we continue with gaps / do a match?
                 # match_match_score = match_scores[pos1 - 1, pos2 - 1] + penalty_matrix[aa_idx[seq1[pos1-1]]][aa_idx[seq2[pos2-1]]]
@@ -162,11 +164,11 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
                                      gap2_best_score])
                 match_scores[pos1, pos2] = best_score
                 if best_score == match_match_score:
-                    match_back[pos1][pos2] = 'match'
+                    match_back[pos1][pos2] = 1
                 elif best_score == gap2_best_score:
-                    match_back[pos1][pos2] = 'gap2'
+                    match_back[pos1][pos2] = 2
                 elif best_score == gap1_best_score:
-                    match_back[pos1][pos2] = 'gap1'
+                    match_back[pos1][pos2] = 0
         return [gap1_back, match_back, gap2_back], match_scores[len1, len2]
 
     def gen_alignment_from_backtrack(backtracks, seq1, seq2, mode='pairwise', profile=None):
@@ -194,42 +196,42 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         # init alignment strings
         align1 = ''
         align2 = ''
-        state = 'match'  # match
+        state = 1  # match
         # while not finished, we go back one step at a time
         while pos1 > 0 or pos2 > 0:
             # if we now in gap1
-            if state == 'gap1':
+            if state == 0:
                 # if this is a gap opening, we go back to match state
-                if gap1_back[pos1][pos2] == 'match':
-                    state = 'match'
+                if gap1_back[pos1][pos2] == 1:
+                    state = 1
                 # we move back one step in seq1, but not seq2 because we are in gap1
                 pos1 -= 1
                 align1 += seq1[pos1]
                 align2 += '-'
             # if we now in gap2
-            elif state == 'gap2':
+            elif state == 2:
                 # if this is a gap2 opening, we go back to match state
-                if gap2_back[pos1][pos2] == 'match':
-                    state = 'match'
+                if gap2_back[pos1][pos2] == 1:
+                    state = 1
                 # we move back one step in seq2, but not seq1 because we are in gap2
                 pos2 -= 1
                 align1 += '-'
                 align2 += seq2[pos2]
             # if we now in match state
-            elif state == 'match':
+            elif state == 1:
                 # what did we do last time?
                 # did we come from match / gap1 closing / gap2 closing?
                 prev_state = match_back[pos1][pos2]
                 # if we came from a match,
                 # we go back one step in BOTH seq1 and seq2
-                if prev_state == 'match':
+                if prev_state == 1:
                     pos1 -= 1
                     pos2 -= 1
                     align1 += seq1[pos1]
                     align2 += seq2[pos2]
                 # if we came from either gap,
                 # we go one step back to gap1 / gap2 state
-                elif prev_state in ['gap1', 'gap2']:
+                elif prev_state in [0, 2]:
                     state = prev_state
         # when we are at the start, we return results
         return align1, align2
