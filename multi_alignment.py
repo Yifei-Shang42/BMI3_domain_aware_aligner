@@ -74,7 +74,7 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
             """
             amino_arr = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
                      'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
-            weighted_score = sum([])
+            weighted_score = 0
             for row in range(len(profile_column)):
                 weighted_score += penalty[base + amino_arr[row]] * profile_column[row]
             return weighted_score
@@ -89,6 +89,8 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         else:
             assert False, 'Invalid mode! Please select from "pairwise" and "profile"!'
         # init scores
+
+
         match_scores = -inf * np.ones((len1+1, len2+1))
         gap1_scores = -inf * np.ones((len1+1, len2+1))
         gap2_scores = -inf * np.ones((len1+1, len2+1))
@@ -157,7 +159,9 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
                     # get the column to calculate weighted score from profile
                     profile_col = [row[pos2-1] for row in profile]
                     match_match_score = match_scores[pos1 - 1, pos2 - 1] + weighted_score_with_profile(seq1[pos1-1], profile_col, penalty)
-                best_score = np.max([gap1_best_score, match_match_score, gap2_best_score])
+                best_score = np.max([gap1_best_score,
+                                     match_match_score,
+                                     gap2_best_score])
                 match_scores[pos1, pos2] = best_score
                 if best_score == match_match_score:
                     match_back[pos1][pos2] = 'match'
@@ -214,17 +218,20 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
                 align1 += '-'
                 align2 += seq2[pos2]
             # if we now in match state
-            elif state == 'match':  # (this can be changed to else but less clear)
-                # what did we do last time? did we come from match / gap1 closing / gap2 closing?
+            elif state == 'match':
+                # what did we do last time?
+                # did we come from match / gap1 closing / gap2 closing?
                 prev_state = match_back[pos1][pos2]
-                # if we came from a match, we go back one step in BOTH seq1 and seq2
+                # if we came from a match,
+                # we go back one step in BOTH seq1 and seq2
                 if prev_state == 'match':
                     pos1 -= 1
                     pos2 -= 1
                     align1 += seq1[pos1]
                     align2 += seq2[pos2]
-                # if we came from either gap, we go one step back to gap1 / gap2 state
-                elif prev_state in ['gap1', 'gap2']:  # (this can be changed to else but less clear)
+                # if we came from either gap,
+                # we go one step back to gap1 / gap2 state
+                elif prev_state in ['gap1', 'gap2']:
                     state = prev_state
         # when we are at the start, we return results
         return align1, align2
@@ -249,14 +256,15 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         'Invalid Mode: available modes: [pairwise, profile]'
     if mode == 'pairwise':
         # normal pairwise procedure
-        backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode)
-        align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode)
+        profile = None
+        # backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode)
+        # align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode)
     if mode == 'profile':
         assert alignment is not None, 'alignment parameter required under "profile" mode!'
         # first generate profile of the alignment
         profile = alignment_to_profile(alignment)
-        backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode, profile)
-        align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode, profile)
+    backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode, profile)
+    align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode, profile)
     return align1[::-1], align2[::-1], score
 
 
@@ -362,20 +370,22 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
     :param epsilon: int penalty for extending a gap
     :return: dict {structure_identifier: {}, ...}
     """
-    def categorize_seqs_by_domain_info(all_domains, ids, seqs):
+    def categorize_seqs_by_domain_info(all_domains, id_seq_dict):
         """
         :param all_domains: dict preconstructed dictionary from UniProt
-        :param ids: list of str UniProt IDs of seqs
-        :param seqs: list of str raw strings for MSA input
+        :param id_seq_dict: dict {UniProt ID: corresponding sequence}
         :return: dict {strucure_identifier: {'seqs': [sequences of this structure], 'ids': [ids of sequences]}, ...}
         """
         # categorize seqs by domain structures
         categories = {}
+        # extract ids & seqs from input dictionary
+        ids = list(id_seq_dict.keys())
+        seqs = list(id_seq_dict.values())
         for i in range(len(ids)):
             curr_id = ids[i]
             curr_seq = seqs[i]
-            curr_domain_info = sequence_to_domain_structure(curr_id, curr_seq, all_domains)
-            domain_structure_list = curr_domain_info['structure_list_']
+            _, domain_structure_list = sequence_to_domain_structure(curr_id, curr_seq, all_domains)
+            # domain_structure_list = curr_domain_info['structure_list_']
             domain_structure_list_no_linkers = [name for name in domain_structure_list if name[-1] != '_']
             # unique identifier of a sequence is all domain names separated by '---' Example: 'KH 1---DH---VHS' 3 domains
             if not domain_structure_list_no_linkers:
@@ -388,20 +398,20 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                 categories[structure_identifier]['seqs'].append(curr_seq)
                 categories[structure_identifier]['ids'].append(curr_id)
         return categories
+    # categorize_seqs_by_domain_info(all_domains, parse_txt_to_dict('CRK_aln.txt')) CHECKED!
 
-    def split_seq_by_structure_dict(structure_dict, seq):
+    def split_seq_by_structure_dict(structure_arr, seq):
         """
-        :param structure_dict: dict generated by sequence_to_domain_structure function
+        :param structure_arr: list generated by sequence_to_domain_structure function
         :param seq: sequence to be split
         :return: list of split domains & linkers (linker could be empty string)
         """
         # init res
         split_seq_list = []
         # iterate through each domain & linker
-        structure_list_ = structure_dict['structure_list_']
-        for structure in structure_list_:
+        for structure in structure_arr:
             # start & end are 0-index, remember to use end+1 for indexing
-            start, end = structure_dict[structure]
+            start, end = structure[1:]
             split_seq_list.append(seq[start: end + 1])
         return split_seq_list
 
@@ -433,11 +443,11 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                 ##########
                 # print('Checking if '+id1+' and '+id2+' are best init alignment')  # testing only, output too long...
                 ##########
-                seq1_structure_dict = sequence_to_domain_structure(id1, seq1, all_domains)
-                seq2_structure_dict = sequence_to_domain_structure(id2, seq2, all_domains)
+                seq1_structure_arr, _ = sequence_to_domain_structure(id1, seq1, all_domains)
+                seq2_structure_arr, _ = sequence_to_domain_structure(id2, seq2, all_domains)
                 # split both sequences to domains & linkers, because same category, should be split in exact same way
-                seq1_split = split_seq_by_structure_dict(seq1_structure_dict, seq1)
-                seq2_split = split_seq_by_structure_dict(seq2_structure_dict, seq2)
+                seq1_split = split_seq_by_structure_dict(seq1_structure_arr, seq1)
+                seq2_split = split_seq_by_structure_dict(seq2_structure_arr, seq2)
                 ##########
                 assert len(seq1_split) == len(seq2_split), 'seq1 & seq2 are of different domain structures'
                 ##########
@@ -461,7 +471,7 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                     best_align = [final_align1, final_align2]
         ###################
         print('Best initial pair found: '+best_id_pair[0]+', '+best_id_pair[1])
-        print(best_id_pair[0]+' and '+best_id_pair[1]+' has been aligned! '+str(len(ids)-2)+' proteins to be aligned...')
+        print(best_id_pair[0]+' and '+best_id_pair[1]+' have been aligned! '+str(len(ids)-2)+' proteins to be aligned...')
         print('-------------------------------------------------------')
         ###################
         return best_pair, best_align
@@ -523,9 +533,9 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
             curr_seq = unaligned_seqs[i]
             curr_id = unaligned_ids[i]
             # get domain info of this seq
-            seq_structure_dict = sequence_to_domain_structure(curr_id, curr_seq, all_domains)
+            seq_structure_arr, _ = sequence_to_domain_structure(curr_id, curr_seq, all_domains)
             # split this seq by domain info, this should have same structure as previous alignment
-            seq_split = split_seq_by_structure_dict(seq_structure_dict, curr_seq)
+            seq_split = split_seq_by_structure_dict(seq_structure_arr, curr_seq)
             ##########
             assert len(seq_split) == len(alignment[0])  # alignment is now 2d list so we use [0]
             ##########
@@ -573,11 +583,8 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
     print('-------------------------------------------------------')
     print('Categorizing '+str(len(id_seq_dict))+' sequences')
     ######################
-    # extract ids & seqs from input dictionary
-    ids = list(id_seq_dict.keys())
-    seqs = list(id_seq_dict.values())
     # split seqs into categories
-    categories = categorize_seqs_by_domain_info(all_domains, ids, seqs)
+    categories = categorize_seqs_by_domain_info(all_domains, id_seq_dict)
     ######################
     print('Sequence Categorization Complete')
     print('-------------------------------------------------------')
@@ -642,9 +649,14 @@ TEST CASES
 
 # MAIN TEST: Hugo's CRK
 if __name__ == '__main__':
+    mode = 'online'
     # parsing data & uniprot domain info
     crk_data = parse_txt_to_dict('CRK_aln.txt')
-    all_domains_crk = parse_panda_to_dict('uniprot_crk.tsv')
+    if mode == 'offline':
+        all_domains_crk = parse_panda_to_dict('uniprot_crk.tsv')
+    elif mode == 'online':
+        print('Retrieving UniProt Domain Annotation online...')
+        all_domains_crk = get_domain_dict_online(list(crk_data.keys()))
     # main algorithm
     domain_alignment_result = domain_aware_greedy_MSA(all_domains_crk, crk_data)
     # extracting alignments from result
@@ -654,26 +666,4 @@ if __name__ == '__main__':
         print('Alignment result for '+str(len(domain_alignment_result[structure]['seqs']))+' sequences of '+structure+' structure: ')
         for alignment in domain_alignment_result[structure]['category_alignment']:
             print(alignment)
-    print('-------------------------------------------------------')
 
-# # 2 seqs
-# # two_seq_test_data_download_link = 'https://rosalind.info/problems/ba5j/'  <--------  DOWNLOAD LINK, YOU MAY NEED TO REGISTER & LOGIN
-# def read_data(name):
-#     with open('C:/Users/lenovo/Downloads/rosalind_'+name+'.txt','r') as infile:
-#         return infile.readlines()
-#
-#
-# data = read_data('ba5j (2)')
-# seq1 = data[0].strip()
-# seq2 = data[1].strip()
-# for seq in affine_gap_penalties_pair_wise_alignment(seq1, seq2):
-#     print(seq)
-#
-# # 3 seqs
-# data = read_data('ba5m')
-# seq1 = data[0].strip()
-# seq2 = data[1].strip()
-# seq3 = data[2].strip()
-# alignment = greedy_multiple_alignment_with_affine_gap_penalties([seq1, seq2, seq3])
-# for align in alignment:
-#     print(align)
