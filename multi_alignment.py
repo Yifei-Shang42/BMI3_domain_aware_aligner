@@ -89,17 +89,15 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         else:
             assert False, 'Invalid mode! Please select from "pairwise" and "profile"!'
         # init scores
-
-
         match_scores = -inf * np.ones((len1+1, len2+1))
         gap1_scores = -inf * np.ones((len1+1, len2+1))
         gap2_scores = -inf * np.ones((len1+1, len2+1))
         # init backtracks
         # what are backtracks:
         # they are matrices of the same dimension as score matrices, used to record the best previous position
-        match_back = [['' for _ in range(len2+1)] for _ in range(len1+1)]
-        gap1_back = [['' for _ in range(len2+1)] for _ in range(len1+1)]
-        gap2_back = [['' for _ in range(len2+1)] for _ in range(len1+1)]
+        match_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
+        gap1_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
+        gap2_back = [['gap1' for _ in range(len2+1)] for _ in range(len1+1)]
         # at start position, all scores are 0
         gap1_scores[0, 0] = 0
         gap2_scores[0, 0] = 0
@@ -441,7 +439,7 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                 id1 = ids[pos1]
                 id2 = ids[pos2]
                 ##########
-                # print('Checking if '+id1+' and '+id2+' are best init alignment')  # testing only, output too long...
+                print('Checking if '+id1+' and '+id2+' are best init alignment')  # testing only, output too long...
                 ##########
                 seq1_structure_arr, _ = sequence_to_domain_structure(id1, seq1, all_domains)
                 seq2_structure_arr, _ = sequence_to_domain_structure(id2, seq2, all_domains)
@@ -651,7 +649,7 @@ TEST CASES
 if __name__ == '__main__':
     mode = 'online'
     # parsing data & uniprot domain info
-    crk_data = parse_txt_to_dict('CRK_aln.txt')
+    crk_data = parse_txt_to_dict('Src-test.txt')
     if mode == 'offline':
         all_domains_crk = parse_panda_to_dict('uniprot_crk.tsv')
     elif mode == 'online':
@@ -667,3 +665,4 @@ if __name__ == '__main__':
         for alignment in domain_alignment_result[structure]['category_alignment']:
             print(alignment)
 
+    # affine_gap_penalties_pair_wise_alignment(crk_data['P12931'], crk_data['Q1JPZ3'])
