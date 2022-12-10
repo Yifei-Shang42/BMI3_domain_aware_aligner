@@ -45,7 +45,8 @@ CORE ALGORITHM: PAIR-WISE GLOBAL ALIGNMENT WITH AFFINE GAP PENALTY
 """
 
 
-def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=1, mode='pairwise', alignment=None):
+def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=1,
+                                             mode='pairwise', alignment=None, outmode='score+align'):
     """
     :param mode: str select between 'pairwise' & 'profile' modes
     :param seq1: str input protein sequence 1
@@ -264,7 +265,10 @@ def affine_gap_penalties_pair_wise_alignment(seq1, seq2=None, sigma=11, epsilon=
         # first generate profile of the alignment
         profile = alignment_to_profile(alignment)
     backtracks, score = gen_backtrack(seq1, seq2, sigma, epsilon, mode, profile)
-    align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode, profile)
+    ## initialize align1 & 2 as empty string and only really compute then under score+align mode to speed up
+    align1 = align2 = ''
+    if outmode == 'score+align':
+        align1, align2 = gen_alignment_from_backtrack(backtracks, seq1, seq2, mode, profile)
     return align1[::-1], align2[::-1], score
 
 
@@ -334,7 +338,7 @@ def greedy_multiple_alignment_with_affine_gap_penalties(seqs, sigma=11, epsilon=
         best_score = -inf
         best_raw_seq = None
         for seq in unaligned_seqs:
-            # for seq2 required in affine_gap_penalties_pair_wise_alignment we use a dummy sequence
+            # for seq2 required in affine_gap_penalties_pair_wise alignment we use a dummy sequence
             align1, align2_dummy, curr_score = affine_gap_penalties_pair_wise_alignment(seq, ''.join('X' for _ in range(len(alignment[0]))),
                                                                                         sigma, epsilon, mode='profile', alignment=alignment)
             if curr_score > best_score:
@@ -432,7 +436,7 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
         best_id_pair = None
         best_score = -inf
         best_align = None
-        # iterate through all seqs to find the best pair-wise alignment
+        # iterate through all seqs to find the best pair-wise alignment, but we don't produce alignment, only get score
         for pos1 in range(len(seqs) - 1):
             for pos2 in range(pos1 + 1, len(seqs)):
                 seq1 = seqs[pos1]
@@ -452,23 +456,32 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                 assert len(seq1_split) == len(seq2_split), 'seq1 & seq2 are of different domain structures'
                 ##########
                 # iterate through domains & linkers, produce fragmented alignment in a list
-                final_align1 = []
-                final_align2 = []
                 # init final score, we will add curr_score of each fragment in loop below
                 final_score = 0
                 for i in range(len(seq1_split)):
                     fragment1 = seq1_split[i]
                     fragment2 = seq2_split[i]
-                    frag_align1, frag_align2, curr_score = affine_gap_penalties_pair_wise_alignment(fragment1, fragment2, sigma,
-                                                                                                    epsilon, mode='pairwise')
-                    final_align1.append(frag_align1)
-                    final_align2.append(frag_align2)
+                    _, __, curr_score = affine_gap_penalties_pair_wise_alignment(fragment1, fragment2, sigma,
+                                                                                                    epsilon, mode='pairwise',
+                                                                                                    outmode='score')
                     final_score += curr_score
                 if final_score > best_score:
                     best_score = curr_score
                     best_id_pair = (id1, id2)
                     best_pair = (seq1_split, seq2_split)
-                    best_align = [final_align1, final_align2]
+        # now we have best pair, we actually produce alignment, not compute score
+        final_align1 = []
+        final_align2 = []
+        best_split1, best_split2 = best_pair
+        for i in range(len(best_split1)):
+            fragment1 = best_split1[i]
+            fragment2 = best_split2[i]
+            frag_align1, frag_align2, _ = affine_gap_penalties_pair_wise_alignment(fragment1, fragment2, sigma,
+                                                                                            epsilon, mode='pairwise',
+                                                                                            outmode='score+align')
+            final_align1.append(frag_align1)
+            final_align2.append(frag_align2)
+        best_align = [final_align1, final_align2]
         ###################
         print('Best initial pair found: '+best_id_pair[0]+', '+best_id_pair[1])
         print(best_id_pair[0]+' and '+best_id_pair[1]+' have been aligned! '+str(len(ids)-2)+' proteins to be aligned...')
@@ -524,8 +537,9 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
                         alignment_new[i].append(new_align[i])
             return alignment_new
         # find the best seq to add to alignment
-        best_align1 = None
-        best_align2 = None
+        # best_align1 = None
+        # best_align2 = None
+        best_seq_split = None
         best_score = -inf
         best_raw_seq = None
         best_raw_id = None
@@ -540,28 +554,39 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
             assert len(seq_split) == len(alignment[0])  # alignment is now 2d list so we use [0]
             ##########
             # init final score, we will add curr_score of each fragment in loop below
-            final_seq_align = []
-            final_aligment_align_dummy = []
             final_score = 0
+            # best_alignment_split= None
             # iterate through domains & linkers, produce fragmented alignment in a list
             for i in range(len(seq_split)):
                 # the first fragment of current sequence, a single string
                 curr_seq_frag = seq_split[i]
                 # get the first aligned fragment of all previous sequences, a list of strings
                 curr_alignment_frag = [align[i] for align in alignment]
-                # for seq2 required in affine_gap_penalties_pair_wise_alignment we use a dummy sequence
-                seq_frag_align, alignment_frag_align_dummy, curr_score = affine_gap_penalties_pair_wise_alignment(curr_seq_frag, ''.join('X' for _ in range(len(curr_alignment_frag[0]))),
-                                                                                                                  sigma, epsilon, mode='profile', alignment=curr_alignment_frag)
+                # for seq2 required in affine_gap_penalties_pair_wise alignment we use a dummy sequence
+                # we only compute score, not produce alignment to speed up
+                _, __, curr_score = affine_gap_penalties_pair_wise_alignment(curr_seq_frag, ''.join('X' for _ in range(len(curr_alignment_frag[0]))),
+                                                                             sigma, epsilon, mode='profile', alignment=curr_alignment_frag, outmode='score')
                 # add results for this alignment for this fragment
                 final_score += curr_score
-                final_seq_align.append(seq_frag_align)
-                final_aligment_align_dummy.append(alignment_frag_align_dummy)
             if final_score > best_score:
-                best_align1 = final_seq_align
-                best_align2 = final_aligment_align_dummy
+                best_seq_split = seq_split
+                # best_alignment_split = curr_alignment_frag
                 best_score = final_score
                 best_raw_seq = curr_seq
                 best_raw_id = curr_id
+        # now we have found the best next sequence, we actually produce alignment, not the score
+        final_seq_align = []
+        final_alignment_align_dummy = []
+        for i in range(len(best_seq_split)):
+            curr_seq_frag = best_seq_split[i]
+            curr_alignment_frag = [align[i] for align in alignment]
+            seq_frag_align, alignment_frag_align_dummy, _ = affine_gap_penalties_pair_wise_alignment(
+                curr_seq_frag, ''.join('X' for _ in range(len(curr_alignment_frag[0]))),
+                sigma, epsilon, mode='profile', alignment=curr_alignment_frag, outmode='score+align')
+            final_seq_align.append(seq_frag_align)
+            final_alignment_align_dummy.append(alignment_frag_align_dummy)
+        best_align1 = final_seq_align
+        best_align2 = final_alignment_align_dummy
         # update the existing alignment based on new gap information recorded in align2_dummy,
         # we need dummy align2 to guide how to make gaps in previous alignments
         alignment_new = update_alignment(alignment, best_align2, mode='domain')
@@ -651,7 +676,7 @@ TEST CASES
 if __name__ == '__main__':
     mode = 'online'
     # parsing data & uniprot domain info
-    crk_data = parse_txt_to_dict('Src-test.txt')
+    crk_data = parse_txt_to_dict('CRK_aln.txt')
     if mode == 'offline':
         all_domains_crk = parse_panda_to_dict('uniprot_crk.tsv')
     elif mode == 'online':
@@ -666,5 +691,3 @@ if __name__ == '__main__':
         print('Alignment result for '+str(len(domain_alignment_result[structure]['seqs']))+' sequences of '+structure+' structure: ')
         for alignment in domain_alignment_result[structure]['category_alignment']:
             print(alignment)
-
-    # affine_gap_penalties_pair_wise_alignment(crk_data['P12931'], crk_data['Q1JPZ3'])
