@@ -23,12 +23,12 @@ def get_domain_from_uniprot_online(ids):
         curr_domains = []
         # read url get xml
         try:
-            url_response = urllib.request.urlopen(url + ID + '.xml')
+            url_response = urllib.request.urlopen(url + ID + '.xml', timeout=10)
             xml_content = url_response.read()
             content = BeautifulSoup(xml_content, features='xml')
             features = content.find_all("feature")
-        except:
-            print('Connection to UniProt LOST! Please Check Your Internet Connection and try again')
+        except Exception as e:
+            assert False, 'Connection to UniProt LOST! Please Check Your Internet Connection and try again'
         for feat in features:
             if feat.attrs['type'] == 'domain':
                 domain_name = feat.attrs['description']
