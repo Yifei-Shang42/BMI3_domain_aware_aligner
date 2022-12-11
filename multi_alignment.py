@@ -685,6 +685,7 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
         D_dict = {}
         # for all sequence pairs
         for i in range(len(curr_split_seqs)):
+            print('Calculating All Pairwise Distances to ' + str(i+1) + '/'+str(len(curr_split_seqs))+' sequence...')
             for j in range(i+1, len(curr_split_seqs)):
                 # first calculate alignment
                 curr_seq1 = curr_split_seqs[i]
@@ -742,7 +743,6 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
         alignment1_new = update_alignment(align1, final_alignment_align_dummy1, mode='domain')
         alignment2_new = update_alignment(align2, final_alignment_align_dummy2, mode='domain')
         ######################
-        print('-------------------------------------------------------')
         print('Merged Cluster: ' + str(cluster1) + ' and ' + str(cluster2))
         print('-------------------------------------------------------')
         ######################
@@ -773,6 +773,8 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
     for structure_identifier in categories:
         ######################
         print('Performing greedy MSA on '+str(len(categories[structure_identifier]['seqs']))+' sequences of structure '+structure_identifier)
+        print('Calculating Pairwise Distance Matrix, this may take a while...')
+        print('-------------------------------------------------------')
         ######################
         # extract seqs & ids for this category
         curr_seqs = categories[structure_identifier]['seqs']
@@ -789,13 +791,10 @@ def domain_aware_greedy_MSA(all_domains, id_seq_dict, sigma=11, epsilon=1):
             curr_split_seqs.append(split_seq_by_structure_dict(curr_split, curr_seqs[i]))
         # calculate distance matrix
         D_dict = calculate_pairwise_distance_matrix(curr_split_seqs, sigma, epsilon)
-        print(D_dict)
         # perform hierarchical clustering
         tree, traces = hierarchical_clustering(D_dict, len(curr_split_seqs))
-        print(traces)
         curr_clusters = [[i] for i in range(1, len(curr_seqs)+1)]
         curr_align = curr_split_seqs
-        print(curr_split_seqs)
         for trace in traces:
             curr_align = merge_two_sequence_clusters(trace, curr_align)
 
