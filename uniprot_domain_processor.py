@@ -12,7 +12,7 @@ CONSTRUCT DICTIONARY
 """
 
 
-def get_domain_dict_online(ids):
+def get_domain_from_uniprot_online(ids):
     # init result dictionary
     all_domain_dict = {}
     # base url
@@ -37,7 +37,7 @@ def get_domain_dict_online(ids):
     return all_domain_dict
 
 
-def parse_panda_to_dict(domain_file_path='uniprot_reviewed_proteins_with_domains.tsv'):
+def get_domain_from_tsv(domain_file_path='uniprot_reviewed_proteins_with_domains.tsv'):
     """
     :param domain_file_path: str path of domain file
     :param domains_nonan: DataFrame: raw uniprot pandas
@@ -81,7 +81,7 @@ def sequence_to_domain_structure(prot_id, seq, all_domains):
     :param seq: str sequence to extract domain from
     :param prot_id: str UniProt ID of sequence to extract domain from
     :param all_domains: dict preconstructed dictionary from UniProt
-    :return: dict domain & linker locations of the sequence (0-index), structure list
+    :return: list of domain & linker names & start end locations of the sequence (0-index), structure list
     """
     # if this id does not contain known domain, we treat entire sequence as a big linker
     if prot_id not in all_domains:
